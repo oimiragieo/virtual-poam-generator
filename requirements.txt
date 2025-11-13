@@ -1,4 +1,4 @@
-# KARP Clone - Nessus Report Processor Requirements
+# vISSM Clone - Nessus Report Processor Requirements
 
 # Core dependencies
 jinja2>=3.1.0

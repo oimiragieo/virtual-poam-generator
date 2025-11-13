@@ -1,5 +1,5 @@
 """
-HTML Exporter for KARP Clone
+HTML Exporter for vISSM
 Exports vulnerability reports to HTML format
 """
 

@@ -1,5 +1,5 @@
 """
-CSV Exporter for KARP Clone
+CSV Exporter for vISSM
 Exports vulnerability reports to CSV format
 """
 

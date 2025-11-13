@@ -1,5 +1,5 @@
 """
-Test suite for KARP Clone
+Test suite for vISSM
 """
 
 import os
@@ -17,8 +17,8 @@ from exporters.html_exporter import export_html_report
 from exporters.csv_exporter import export_csv_report, export_csv_summary
 
 
-class TestKARPClone(unittest.TestCase):
-    """Test cases for KARP Clone functionality"""
+class TestVISSM(unittest.TestCase):
+    """Test cases for vISSM functionality"""
 
     def setUp(self):
         """Set up test environment"""
@@ -54,7 +54,7 @@ class TestKARPClone(unittest.TestCase):
         ], capture_output=True, text=True)
 
         self.assertEqual(result.returncode, 0)
-        self.assertIn('KARP Clone', result.stdout)
+        self.assertIn('vISSM', result.stdout)
 
     def test_cli_version(self):
         """Test that CLI shows version"""
@@ -66,7 +66,7 @@ class TestKARPClone(unittest.TestCase):
         ], capture_output=True, text=True)
 
         self.assertEqual(result.returncode, 0)
-        self.assertIn('KARP Clone v1.0', result.stdout)
+        self.assertIn('vISSM v1.0', result.stdout)
 
     def test_nessus_parser_structure(self):
         """Test Nessus parser data structures"""
