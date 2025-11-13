@@ -1,5 +1,5 @@
 """
-Template Engine for KARP Clone
+Template Engine for vISSM
 Handles template rendering for various output formats
 """
 
@@ -98,7 +98,7 @@ class ReportTemplate:
         # Add common template variables
         data = analysis_data.copy()
         data['generated_at'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        data['generated_by'] = 'KARP Clone v1.0'
+        data['generated_by'] = 'vISSM v1.0'
 
         # Add summary statistics
         if 'summary' in data:

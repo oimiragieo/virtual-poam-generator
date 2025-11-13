@@ -1,5 +1,5 @@
 """
-PDF Exporter for KARP Clone
+PDF Exporter for vISSM
 Exports vulnerability reports to PDF format using WeasyPrint
 """
 

@@ -1,6 +1,6 @@
 # Project Overview
 
-This project, "KARP Clone," is a Python-based command-line tool designed to process Nessus vulnerability reports. It parses `.nessus` files, analyzes the vulnerability data, and exports the findings into various formats, including HTML, PDF, CSV, and Excel. The tool provides features like risk scoring, vulnerability categorization, and trend analysis.
+This project, "vISSM," is a Python-based command-line tool designed to process Nessus vulnerability reports. It parses `.nessus` files, analyzes the vulnerability data, and exports the findings into various formats, including HTML, PDF, CSV, and Excel. The tool provides features like risk scoring, vulnerability categorization, and trend analysis.
 
 ## Building and Running
 
@@ -8,8 +8,8 @@ This project, "KARP Clone," is a Python-based command-line tool designed to proc
 
 1.  **Clone the repository:**
     ```bash
-    git clone https://github.com/your-username/karp-clone.git
-    cd karp-clone
+    git clone https://github.com/your-username/virtual-poam-generator.git
+    cd virtual-poam-generator
     ```
 
 2.  **Install dependencies:**
@@ -24,19 +24,19 @@ This project, "KARP Clone," is a Python-based command-line tool designed to proc
 
 ### Running the tool
 
-The tool is run from the command line using the `karp-clone` command (after installation) or `python cli.py`.
+The tool is run from the command line using the `virtual-poam-generator` command (after installation) or `python cli.py`.
 
 **Basic Usage:**
 
 ```bash
 # Process a Nessus file and export to HTML
-karp-clone report.nessus -o report.html -f html
+virtual-poam-generator report.nessus -o report.html -f html
 
 # Export to CSV format
-karp-clone report.nessus -o report.csv -f csv
+virtual-poam-generator report.nessus -o report.csv -f csv
 
 # Generate an Excel vulnerability report
-karp-clone report.nessus -o report.xlsx -f xlsx -r vulnerability
+virtual-poam-generator report.nessus -o report.xlsx -f xlsx -r vulnerability
 ```
 
 **Command-line Options:**

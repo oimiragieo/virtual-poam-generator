@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Excel exporter for KARP clone - generates XLSX/XLSM files matching KARP.exe output
+Excel exporter for vISSM clone - generates XLSX/XLSM files matching vISSM.exe output
 """
 
 import os
@@ -13,7 +13,7 @@ from typing import Dict, Any, List
 
 
 class ExcelExporter:
-    """Excel exporter that matches KARP.exe output format"""
+    """Excel exporter that matches vISSM.exe output format"""
 
     def __init__(self):
         self.timestamp = datetime.now().strftime("%Y-%m-%d-%H%M")
@@ -21,7 +21,7 @@ class ExcelExporter:
     def export_vulnerability_report(self, analysis_data: Dict[str, Any], output_path: str = None) -> str:
         """Export vulnerability report as Excel file"""
         if not output_path:
-            output_path = f"KARP_Vulnerability_Report_{self.timestamp}.xlsx"
+            output_path = f"vISSM_Vulnerability_Report_{self.timestamp}.xlsx"
 
         # Ensure output directory exists
         output_dir = os.path.dirname(output_path)
@@ -36,7 +36,7 @@ class ExcelExporter:
         report = analysis_data.get('report')
         host_summaries = analysis_data.get('host_summaries', [])
 
-        # Headers matching KARP format
+        # Headers matching vISSM format
         headers = [
             'IP', 'Hostname', 'Plugin ID', 'Plugin Name', 'Severity',
             'Family', 'Port', 'Service', 'Description', 'Solution', 'CVE'
@@ -87,7 +87,7 @@ class ExcelExporter:
     def export_ivv_test_plan(self, analysis_data: Dict[str, Any], output_path: str = None) -> str:
         """Export IV&V Test Plan as Excel file"""
         if not output_path:
-            output_path = f"KARP_IV&V_Test_Plan_{self.timestamp}.xlsx"
+            output_path = f"vISSM_IV&V_Test_Plan_{self.timestamp}.xlsx"
 
         # Ensure output directory exists
         output_dir = os.path.dirname(output_path)
@@ -98,7 +98,7 @@ class ExcelExporter:
         ws = wb.active
         ws.title = "IV&V Test Plan"
 
-        # Headers matching KARP format
+        # Headers matching vISSM format
         headers = [
             'Test ID', 'Test Name', 'Test Description', 'Expected Results',
             'Test Steps', 'Pass/Fail Criteria', 'Test Environment', 'Test Data'
@@ -154,7 +154,7 @@ class ExcelExporter:
     def export_cnet_report(self, analysis_data: Dict[str, Any], output_path: str = None) -> str:
         """Export CNET Report as Excel file"""
         if not output_path:
-            output_path = f"KARP_CET_Report_{self.timestamp}.xlsx"
+            output_path = f"vISSM_CET_Report_{self.timestamp}.xlsx"
 
         # Ensure output directory exists
         output_dir = os.path.dirname(output_path)
@@ -165,7 +165,7 @@ class ExcelExporter:
         ws = wb.active
         ws.title = "CNET Report"
 
-        # Headers matching KARP format
+        # Headers matching vISSM format
         headers = [
             'IP', 'Hostname', 'Plugin ID', 'Plugin Name', 'Severity',
             'Family', 'Port', 'Service', 'Description', 'Solution', 'CVE'
@@ -219,7 +219,7 @@ class ExcelExporter:
     def export_hw_sw_inventory(self, analysis_data: Dict[str, Any], output_path: str = None) -> str:
         """Export HW/SW Inventory as Excel file"""
         if not output_path:
-            output_path = f"KARP_Detailed_Inventory_{self.timestamp}.xlsx"
+            output_path = f"vISSM_Detailed_Inventory_{self.timestamp}.xlsx"
 
         # Ensure output directory exists
         output_dir = os.path.dirname(output_path)
@@ -307,7 +307,7 @@ class ExcelExporter:
     def export_emass_inventory(self, analysis_data: Dict[str, Any], output_path: str = None) -> str:
         """Export eMASS Inventory as Excel file with macros"""
         if not output_path:
-            output_path = f"KARP_eMASS_Inventory_{self.timestamp}.xlsm"
+            output_path = f"vISSM_eMASS_Inventory_{self.timestamp}.xlsm"
 
         # Ensure output directory exists
         output_dir = os.path.dirname(output_path)

@@ -1,5 +1,5 @@
 """
-Setup script for KARP Clone - Nessus Report Processor
+Setup script for vISSM Clone - Nessus Report Processor
 """
 
 from setuptools import setup, find_packages
@@ -11,7 +11,7 @@ def read_readme():
     if os.path.exists(readme_path):
         with open(readme_path, 'r', encoding='utf-8') as f:
             return f.read()
-    return "KARP Clone - Nessus Report Processor"
+    return "vISSM Clone - Nessus Report Processor"
 
 # Read requirements
 def read_requirements():

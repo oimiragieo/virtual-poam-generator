@@ -1,5 +1,5 @@
 """
-Nessus XML Parser for KARP Clone
+Nessus XML Parser for vISSM
 Parses .nessus files and extracts vulnerability data
 """
 

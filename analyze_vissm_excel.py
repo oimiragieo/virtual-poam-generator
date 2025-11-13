@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Analyze KARP-generated Excel files to understand their structure
+Analyze vISSM-generated Excel files to understand their structure
 """
 
 import pandas as pd
@@ -61,17 +61,17 @@ def analyze_excel_file(filepath):
     except Exception as e:
         print(f"Error analyzing {filepath}: {e}")
 
-def analyze_all_karp_files():
-    """Analyze all KARP-generated Excel files"""
+def analyze_all_vissm_files():
+    """Analyze all vISSM-generated Excel files"""
     files = [
-        "KARP_CET_Report_2021-05-26-2018.xlsx",
-        "KARP_Detailed_Inventory_2021-05-27-0034.xlsx",
-        "KARP_IV&V_Test_Plan_2021-05-25-0720.xlsx",
-        "KARP_Vulnerability_Report_2021-05-26-1959.xlsx",
-        "KARP_eMASS_Inventory_2021-05-25-0126.xlsm"
+        "vISSM_CET_Report_2021-05-26-2018.xlsx",
+        "vISSM_Detailed_Inventory_2021-05-27-0034.xlsx",
+        "vISSM_IV&V_Test_Plan_2021-05-25-0720.xlsx",
+        "vISSM_Vulnerability_Report_2021-05-26-1959.xlsx",
+        "vISSM_eMASS_Inventory_2021-05-25-0126.xlsm"
     ]
 
-    print("KARP EXCEL FILE ANALYSIS")
+    print("vISSM EXCEL FILE ANALYSIS")
     print("="*80)
     print(f"Analysis started at: {datetime.now()}")
 
@@ -86,4 +86,4 @@ def analyze_all_karp_files():
     print(f"{'='*80}")
 
 if __name__ == "__main__":
-    analyze_all_karp_files()
+    analyze_all_vissm_files()
