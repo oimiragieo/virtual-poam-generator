@@ -4,7 +4,7 @@ Handles template rendering for various output formats
 """
 
 import os
-from typing import Dict, Any, Optional
+from typing import Dict, Any
 from jinja2 import Environment, FileSystemLoader, Template
 from datetime import datetime
 
@@ -14,20 +14,20 @@ class TemplateEngine:
 
     def __init__(self, template_dir: str = None):
         if template_dir is None:
-            template_dir = os.path.join(os.path.dirname(__file__), 'templates')
+            template_dir = os.path.join(os.path.dirname(__file__), "templates")
 
         self.template_dir = template_dir
         self.env = Environment(
             loader=FileSystemLoader(template_dir),
             autoescape=True,
             trim_blocks=True,
-            lstrip_blocks=True
+            lstrip_blocks=True,
         )
 
         # Add custom filters
-        self.env.filters['severity_name'] = self._severity_name_filter
-        self.env.filters['risk_level'] = self._risk_level_filter
-        self.env.filters['format_date'] = self._format_date_filter
+        self.env.filters["severity_name"] = self._severity_name_filter
+        self.env.filters["risk_level"] = self._risk_level_filter
+        self.env.filters["format_date"] = self._format_date_filter
 
     def render_template(self, template_name: str, data: Dict[str, Any]) -> str:
         """Render a template with the provided data"""
@@ -47,43 +47,37 @@ class TemplateEngine:
 
     def _severity_name_filter(self, severity: int) -> str:
         """Convert severity number to name"""
-        severity_names = {
-            0: 'Info',
-            1: 'Low',
-            2: 'Medium',
-            3: 'High',
-            4: 'Critical'
-        }
-        return severity_names.get(severity, 'Unknown')
+        severity_names = {0: "Info", 1: "Low", 2: "Medium", 3: "High", 4: "Critical"}
+        return severity_names.get(severity, "Unknown")
 
     def _risk_level_filter(self, risk_score: float) -> str:
         """Convert risk score to risk level"""
         if risk_score >= 80:
-            return 'Critical'
+            return "Critical"
         elif risk_score >= 60:
-            return 'High'
+            return "High"
         elif risk_score >= 40:
-            return 'Medium'
+            return "Medium"
         elif risk_score >= 20:
-            return 'Low'
+            return "Low"
         else:
-            return 'Minimal'
+            return "Minimal"
 
     def _format_date_filter(self, date_string: str) -> str:
         """Format date string for display"""
         if not date_string:
-            return 'Unknown'
+            return "Unknown"
 
         try:
             # Try to parse common date formats
-            for fmt in ['%Y-%m-%d %H:%M:%S', '%Y-%m-%d', '%m/%d/%Y']:
+            for fmt in ["%Y-%m-%d %H:%M:%S", "%Y-%m-%d", "%m/%d/%Y"]:
                 try:
                     dt = datetime.strptime(date_string, fmt)
-                    return dt.strftime('%B %d, %Y')
+                    return dt.strftime("%B %d, %Y")
                 except ValueError:
                     continue
             return date_string
-        except:
+        except Exception:
             return date_string
 
 
@@ -97,19 +91,19 @@ class ReportTemplate:
         """Prepare data for template rendering"""
         # Add common template variables
         data = analysis_data.copy()
-        data['generated_at'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        data['generated_by'] = 'vISSM v1.0'
+        data["generated_at"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        data["generated_by"] = "vISSM v1.0"
 
         # Add summary statistics
-        if 'summary' in data:
-            summary = data['summary']
-            data['total_hosts'] = len(data.get('host_summaries', []))
-            data['total_vulnerabilities'] = summary.total_vulnerabilities
-            data['critical_count'] = summary.critical_count
-            data['high_count'] = summary.high_count
-            data['medium_count'] = summary.medium_count
-            data['low_count'] = summary.low_count
-            data['info_count'] = summary.info_count
+        if "summary" in data:
+            summary = data["summary"]
+            data["total_hosts"] = len(data.get("host_summaries", []))
+            data["total_vulnerabilities"] = summary.total_vulnerabilities
+            data["critical_count"] = summary.critical_count
+            data["high_count"] = summary.high_count
+            data["medium_count"] = summary.medium_count
+            data["low_count"] = summary.low_count
+            data["info_count"] = summary.info_count
 
         return data
 
@@ -122,8 +116,8 @@ class HTMLReportTemplate(ReportTemplate):
         data = self.prepare_data(analysis_data)
 
         # Add HTML-specific data
-        data['css_styles'] = self._get_css_styles()
-        data['javascript'] = self._get_javascript()
+        data["css_styles"] = self._get_css_styles()
+        data["javascript"] = self._get_javascript()
 
         # Use inline template as fallback if template files don't exist
         return self._render_inline_html(data)
@@ -171,10 +165,7 @@ class HTMLReportTemplate(ReportTemplate):
 
     def _render_inline_html(self, data: Dict[str, Any]) -> str:
         """Render HTML report using inline template"""
-        summary = data.get('summary', {})
-        host_summaries = data.get('host_summaries', [])
-        report = data.get('report')
-
+        host_summaries = data.get("host_summaries", [])
         html = f"""
 <!DOCTYPE html>
 <html>
@@ -260,7 +251,7 @@ class HTMLReportTemplate(ReportTemplate):
     <ul>
 """
 
-        for rec in data.get('recommendations', []):
+        for rec in data.get("recommendations", []):
             html += f"        <li>{rec}</li>\n"
 
         html += """
@@ -279,19 +270,19 @@ class PDFReportTemplate(ReportTemplate):
         data = self.prepare_data(analysis_data)
 
         # Add PDF-specific styling
-        data['pdf_styles'] = self._get_pdf_styles()
+        data["pdf_styles"] = self._get_pdf_styles()
 
         # Select template based on report type
-        report_type = analysis_data.get('report_type', 'vulnerability')
+        report_type = analysis_data.get("report_type", "vulnerability")
         template_map = {
-            'vulnerability': 'pdf_report.html',
-            'ivv-test-plan': 'ivv_test_plan.html',
-            'cnet': 'cnet_report.html',
-            'hw-sw-inventory': 'hw_sw_inventory.html',
-            'emass-inventory': 'emass_inventory.html'
+            "vulnerability": "pdf_report.html",
+            "ivv-test-plan": "ivv_test_plan.html",
+            "cnet": "cnet_report.html",
+            "hw-sw-inventory": "hw_sw_inventory.html",
+            "emass-inventory": "emass_inventory.html",
         }
 
-        template_name = template_map.get(report_type, 'pdf_report.html')
+        template_name = template_map.get(report_type, "pdf_report.html")
         return self.template_engine.render_template(template_name, data)
 
     def _get_pdf_styles(self) -> str:
@@ -330,35 +321,59 @@ class CSVReportTemplate(ReportTemplate):
         writer = csv.writer(output)
 
         # Write header
-        writer.writerow([
-            'Host', 'IP', 'OS', 'Plugin ID', 'Plugin Name', 'Severity',
-            'Family', 'Port', 'Service', 'Description', 'Solution'
-        ])
+        writer.writerow(
+            [
+                "Host",
+                "IP",
+                "OS",
+                "Plugin ID",
+                "Plugin Name",
+                "Severity",
+                "Family",
+                "Port",
+                "Service",
+                "Description",
+                "Solution",
+            ]
+        )
 
         # Write vulnerability data
-        for host_summary in data.get('host_summaries', []):
+        for host_summary in data.get("host_summaries", []):
             # Find the corresponding host data
             host_data = None
-            for host in data.get('report', {}).get('hosts', []):
-                if host.name == host_summary.ip or host.properties.hostname == host_summary.hostname:
+            for host in data.get("report", {}).get("hosts", []):
+                if (
+                    host.name == host_summary.ip
+                    or host.properties.hostname == host_summary.hostname
+                ):
                     host_data = host
                     break
 
             if host_data:
                 for vuln in host_data.vulnerabilities:
-                    writer.writerow([
-                        host_summary.hostname,
-                        host_summary.ip,
-                        host_summary.os,
-                        vuln.plugin_id,
-                        vuln.plugin_name,
-                        vuln.severity,
-                        vuln.plugin_family,
-                        vuln.port,
-                        vuln.service_name,
-                        vuln.description[:200] + '...' if len(vuln.description) > 200 else vuln.description,
-                        vuln.solution[:100] + '...' if len(vuln.solution) > 100 else vuln.solution
-                    ])
+                    writer.writerow(
+                        [
+                            host_summary.hostname,
+                            host_summary.ip,
+                            host_summary.os,
+                            vuln.plugin_id,
+                            vuln.plugin_name,
+                            vuln.severity,
+                            vuln.plugin_family,
+                            vuln.port,
+                            vuln.service_name,
+                            (
+                                vuln.description[:200] + "..."
+                                if len(vuln.description) > 200
+                                else vuln.description
+                            ),
+                            (
+                                vuln.solution[:100] + "..."
+                                if len(vuln.solution) > 100
+                                else vuln.solution
+                            ),
+                        ]
+                    )
 
         return output.getvalue()
 
@@ -403,7 +418,7 @@ if __name__ == "__main__":
         # Parse and process the file
         report = parse_nessus_file(sys.argv[1])
         analysis_data = process_nessus_report(report)
-        analysis_data['report'] = report
+        analysis_data["report"] = report
 
         # Test HTML rendering
         html_output = render_html_report(analysis_data)

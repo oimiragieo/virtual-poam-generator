@@ -4,14 +4,14 @@ Parses .nessus files and extracts vulnerability data
 """
 
 import xml.etree.ElementTree as ET
-from typing import List, Dict, Any, Optional
+from typing import List, Dict
 from dataclasses import dataclass
-from datetime import datetime
 
 
 @dataclass
 class HostProperties:
     """Host properties from Nessus scan"""
+
     hostname: str
     ip: str
     os: str
@@ -25,6 +25,7 @@ class HostProperties:
 @dataclass
 class Vulnerability:
     """Individual vulnerability finding"""
+
     plugin_id: str
     plugin_name: str
     plugin_family: str
@@ -44,6 +45,7 @@ class Vulnerability:
 @dataclass
 class ReportHost:
     """Host with vulnerabilities"""
+
     name: str
     properties: HostProperties
     vulnerabilities: List[Vulnerability]
@@ -52,6 +54,7 @@ class ReportHost:
 @dataclass
 class NessusReport:
     """Complete Nessus scan report"""
+
     policy_name: str
     scan_name: str
     scan_start: str
@@ -87,12 +90,12 @@ class NessusParser:
 
             return NessusReport(
                 policy_name=policy_name,
-                scan_name=scan_info.get('name', 'Unknown Scan'),
-                scan_start=scan_info.get('start', ''),
-                scan_end=scan_info.get('end', ''),
+                scan_name=scan_info.get("name", "Unknown Scan"),
+                scan_start=scan_info.get("start", ""),
+                scan_end=scan_info.get("end", ""),
                 hosts=hosts,
                 total_hosts=len(hosts),
-                total_vulnerabilities=total_vulnerabilities
+                total_vulnerabilities=total_vulnerabilities,
             )
 
         except ET.ParseError as e:
@@ -102,10 +105,10 @@ class NessusParser:
 
     def _extract_policy_name(self) -> str:
         """Extract policy name from the file"""
-        policy_elem = self.root.find('.//Policy/policyName')
+        policy_elem = self.root.find(".//Policy/policyName")
         if policy_elem is not None:
-            return policy_elem.text or 'Unknown Policy'
-        return 'Unknown Policy'
+            return policy_elem.text or "Unknown Policy"
+        return "Unknown Policy"
 
     def _extract_scan_info(self) -> Dict[str, str]:
         """Extract scan information"""
@@ -114,7 +117,11 @@ class NessusParser:
         # Look for scan start/end times
         start_elem = self.root.find('.//preference[@name="TARGET"]')
         if start_elem is not None:
-            info['name'] = start_elem.find('value').text if start_elem.find('value') is not None else 'Unknown'
+            info["name"] = (
+                start_elem.find("value").text
+                if start_elem.find("value") is not None
+                else "Unknown"
+            )
 
         return info
 
@@ -122,8 +129,8 @@ class NessusParser:
         """Parse all ReportHost elements"""
         hosts = []
 
-        for host_elem in self.root.findall('.//ReportHost'):
-            host_name = host_elem.get('name', 'Unknown')
+        for host_elem in self.root.findall(".//ReportHost"):
+            host_name = host_elem.get("name", "Unknown")
 
             # Parse host properties
             properties = self._parse_host_properties(host_elem)
@@ -131,51 +138,53 @@ class NessusParser:
             # Parse vulnerabilities for this host
             vulnerabilities = self._parse_host_vulnerabilities(host_elem)
 
-            hosts.append(ReportHost(
-                name=host_name,
-                properties=properties,
-                vulnerabilities=vulnerabilities
-            ))
+            hosts.append(
+                ReportHost(
+                    name=host_name,
+                    properties=properties,
+                    vulnerabilities=vulnerabilities,
+                )
+            )
 
         return hosts
 
     def _parse_host_properties(self, host_elem) -> HostProperties:
         """Parse host properties from ReportHost"""
         # Get IP from host element name attribute first
-        host_ip = host_elem.get('name', '')
+        host_ip = host_elem.get("name", "")
 
         props = HostProperties(
-            hostname='',
+            hostname="",
             ip=host_ip,  # Set IP from host element name
-            os='',
-            mac_address='',
-            netbios_name='',
-            fqdn='',
-            scan_start='',
-            scan_end=''
+            os="",
+            mac_address="",
+            netbios_name="",
+            fqdn="",
+            scan_start="",
+            scan_end="",
         )
 
-        host_props = host_elem.find('HostProperties')
+        host_props = host_elem.find("HostProperties")
         if host_props is not None:
-            for tag in host_props.findall('tag'):
-                name = tag.get('name', '')
-                value = tag.text or ''
+            for tag in host_props.findall("tag"):
+                name = tag.get("name", "")
+                value = tag.text or ""
 
-                if name == 'host-ip':
+                if name == "host-ip":
                     props.ip = value  # Prefer host-ip tag if available
-                elif name == 'hostname':
+                elif name == "hostname":
                     props.hostname = value
-                elif name == 'operating-system':
+                elif name == "operating-system":
                     props.os = value
-                elif name == 'mac-address':
+                elif name == "mac-address":
                     props.mac_address = value
-                elif name == 'netbios-name':
+                elif name == "netbios-name":
                     props.netbios_name = value
-                elif name == 'fqdn':
+                elif name == "fqdn":
                     props.fqdn = value
-                elif name == 'HOST_START':
+                elif name == "HOST_START":
                     props.scan_start = value
-                elif name == 'HOST_END':
+                elif name == "HOST_END":
                     props.scan_end = value
 
         return props
@@ -184,22 +193,22 @@ class NessusParser:
         """Parse vulnerabilities for a specific host"""
         vulnerabilities = []
 
-        for item in host_elem.findall('.//ReportItem'):
+        for item in host_elem.findall(".//ReportItem"):
             vuln = Vulnerability(
-                plugin_id=item.get('pluginID', ''),
-                plugin_name=item.get('pluginName', ''),
-                plugin_family=item.get('pluginFamily', ''),
-                severity=int(item.get('severity', '0')),
-                description=self._get_text(item, 'description'),
-                solution=self._get_text(item, 'solution'),
-                see_also=self._get_text(item, 'see_also'),
-                cve=self._get_text(item, 'cve'),
-                cvss_base_score=self._get_text(item, 'cvss_base_score'),
-                cvss_vector=self._get_text(item, 'cvss_vector'),
-                port=item.get('port', ''),
-                protocol=item.get('protocol', ''),
-                service_name=item.get('svc_name', ''),
-                plugin_output=self._get_text(item, 'plugin_output')
+                plugin_id=item.get("pluginID", ""),
+                plugin_name=item.get("pluginName", ""),
+                plugin_family=item.get("pluginFamily", ""),
+                severity=int(item.get("severity", "0")),
+                description=self._get_text(item, "description"),
+                solution=self._get_text(item, "solution"),
+                see_also=self._get_text(item, "see_also"),
+                cve=self._get_text(item, "cve"),
+                cvss_base_score=self._get_text(item, "cvss_base_score"),
+                cvss_vector=self._get_text(item, "cvss_vector"),
+                port=item.get("port", ""),
+                protocol=item.get("protocol", ""),
+                service_name=item.get("svc_name", ""),
+                plugin_output=self._get_text(item, "plugin_output"),
             )
             vulnerabilities.append(vuln)
 
@@ -208,7 +217,7 @@ class NessusParser:
     def _get_text(self, element, tag_name: str) -> str:
         """Safely get text content from XML element"""
         elem = element.find(tag_name)
-        return elem.text if elem is not None else ''
+        return elem.text if elem is not None else ""
 
 
 def parse_nessus_file(file_path: str) -> NessusReport:
@@ -227,7 +236,7 @@ if __name__ == "__main__":
 
     try:
         report = parse_nessus_file(sys.argv[1])
-        print(f"Parsed Nessus report:")
+        print("Parsed Nessus report:")
         print(f"  Policy: {report.policy_name}")
         print(f"  Hosts: {report.total_hosts}")
         print(f"  Vulnerabilities: {report.total_vulnerabilities}")
