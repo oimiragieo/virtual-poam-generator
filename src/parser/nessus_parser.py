@@ -141,9 +141,12 @@ class NessusParser:
 
     def _parse_host_properties(self, host_elem) -> HostProperties:
         """Parse host properties from ReportHost"""
+        # Get IP from host element name attribute first
+        host_ip = host_elem.get('name', '')
+
         props = HostProperties(
             hostname='',
-            ip='',
+            ip=host_ip,  # Set IP from host element name
             os='',
             mac_address='',
             netbios_name='',
@@ -158,7 +161,9 @@ class NessusParser:
                 name = tag.get('name', '')
                 value = tag.text or ''
 
-                if name == 'hostname':
+                if name == 'host-ip':
+                    props.ip = value  # Prefer host-ip tag if available
+                elif name == 'hostname':
                     props.hostname = value
                 elif name == 'operating-system':
                     props.os = value
@@ -172,10 +177,6 @@ class NessusParser:
                     props.scan_start = value
                 elif name == 'HOST_END':
                     props.scan_end = value
-
-        # Use host name as IP if not found
-        if not props.ip:
-            props.ip = host_elem.get('name', '')
 
         return props
 

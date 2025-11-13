@@ -22,14 +22,14 @@ def read_requirements():
     return []
 
 setup(
-    name="karp-clone",
+    name="virtual-poam-generator",
     version="1.0.0",
-    author="KARP Clone Team",
-    author_email="karp-clone@example.com",
-    description="Open-source Nessus report processor - KARP clone",
+    author="Virtual POAM Generator Team",
+    author_email="support@example.com",
+    description="DoD eMASS compliance tool - Generates POAMs and reports from Nessus scans",
     long_description=read_readme(),
     long_description_content_type="text/markdown",
-    url="https://github.com/your-username/karp-clone",
+    url="https://github.com/your-username/virtual-poam-generator",
     packages=find_packages(),
     classifiers=[
         "Development Status :: 4 - Beta",
@@ -50,7 +50,8 @@ setup(
     },
     entry_points={
         "console_scripts": [
-            "karp-clone=cli:main",
+            "poam-generator=cli:main",
+            "virtual-poam=cli:main",
         ],
     },
     include_package_data=True,

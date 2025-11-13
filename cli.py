@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
-KARP Clone - Nessus Report Processor
+Virtual POAM Generator - DoD eMASS Compliance Tool
 Command-line interface for processing Nessus vulnerability reports
+and generating DoD-compliant POAMs and compliance documentation
 """
 
 import argparse
@@ -22,23 +23,25 @@ from exporters.excel_exporter import (
     export_excel_ivv_test_plan,
     export_excel_cnet_report,
     export_excel_hw_sw_inventory,
-    export_excel_emass_inventory
+    export_excel_emass_inventory,
+    export_excel_poam
 )
 
 
 def main():
     """Main CLI entry point"""
     parser = argparse.ArgumentParser(
-        description='KARP Clone - Nessus Report Processor',
+        description='Virtual POAM Generator - DoD eMASS Compliance Tool',
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  karp-clone report.nessus -o report.xlsx -f xlsx -r vulnerability
-  karp-clone report.nessus -o test_plan.xlsx -f xlsx -r ivv-test-plan
-  karp-clone report.nessus -o inventory.xlsx -f xlsx -r hw-sw-inventory
-  karp-clone report.nessus -o emass.xlsm -f xlsx -r emass-inventory
-  karp-clone report.nessus -o report.html -f html
-  karp-clone report.nessus --summary -o summary.csv
+  python cli.py report.nessus -o poam.xlsx -f xlsx -r poam
+  python cli.py report.nessus -o report.xlsx -f xlsx -r vulnerability
+  python cli.py report.nessus -o test_plan.xlsx -f xlsx -r ivv-test-plan
+  python cli.py report.nessus -o inventory.xlsx -f xlsx -r hw-sw-inventory
+  python cli.py report.nessus -o emass.xlsm -f xlsx -r emass-inventory
+  python cli.py report.nessus -o report.html -f html
+  python cli.py report.nessus --summary -o summary.csv
         """
     )
 
@@ -62,7 +65,7 @@ Examples:
 
     parser.add_argument(
         '-r', '--report-type',
-        choices=['vulnerability', 'ivv-test-plan', 'cnet', 'hw-sw-inventory', 'emass-inventory'],
+        choices=['vulnerability', 'poam', 'ivv-test-plan', 'cnet', 'hw-sw-inventory', 'emass-inventory'],
         default='vulnerability',
         help='Report type to generate (default: vulnerability)'
     )
@@ -88,7 +91,7 @@ Examples:
     parser.add_argument(
         '--version',
         action='version',
-        version='KARP Clone v1.0'
+        version='Virtual POAM Generator v1.0.0'
     )
 
     args = parser.parse_args()
@@ -145,6 +148,8 @@ Examples:
             # Route to appropriate Excel exporter based on report type
             if args.report_type == 'vulnerability':
                 output_path = export_excel_vulnerability_report(analysis_data, args.output)
+            elif args.report_type == 'poam':
+                output_path = export_excel_poam(analysis_data, args.output)
             elif args.report_type == 'ivv-test-plan':
                 output_path = export_excel_ivv_test_plan(analysis_data, args.output)
             elif args.report_type == 'cnet':

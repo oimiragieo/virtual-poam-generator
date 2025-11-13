@@ -122,7 +122,8 @@ class ExcelExporter:
                 for host in report.hosts:
                     if host.name == host_summary.ip or host.properties.hostname == host_summary.hostname:
                         for vuln in host.vulnerabilities:
-                            if vuln.severity in ['Critical', 'High']:  # Focus on high-severity vulnerabilities
+                            # Severity: 4=Critical, 3=High, 2=Medium, 1=Low, 0=Info
+                            if vuln.severity >= 3:  # Focus on Critical and High severity vulnerabilities
                                 ws.cell(row=row, column=1, value=f"TEST-{test_id:04d}")
                                 ws.cell(row=row, column=2, value=f"Test {vuln.plugin_name}")
                                 ws.cell(row=row, column=3, value=f"Verify remediation of {vuln.plugin_name} on {host.properties.hostname}")
@@ -504,6 +505,174 @@ class ExcelExporter:
         wb.save(output_path)
         return output_path
 
+    def export_poam(self, analysis_data: Dict[str, Any], output_path: str = None) -> str:
+        """Export POAM (Plan of Action & Milestones) as Excel file"""
+        if not output_path:
+            output_path = f"POAM_{self.timestamp}.xlsx"
+
+        # Ensure output directory exists
+        output_dir = os.path.dirname(output_path)
+        if output_dir:
+            os.makedirs(output_dir, exist_ok=True)
+
+        wb = Workbook()
+        ws = wb.active
+        ws.title = "POAM"
+
+        # Add classification header
+        ws.cell(row=1, column=1, value="***** UNCLASSIFIED//FOR OFFICIAL USE ONLY *****")
+        ws.merge_cells('A1:P1')
+        ws.cell(row=1, column=1).font = Font(bold=True, color="FF0000")
+        ws.cell(row=1, column=1).alignment = Alignment(horizontal="center")
+
+        # Add metadata
+        ws.cell(row=2, column=1, value="Date Exported:")
+        ws.cell(row=2, column=2, value=datetime.now().strftime("%Y-%m-%d"))
+        ws.cell(row=3, column=1, value="Information System:")
+        ws.cell(row=3, column=2, value="[Enter System Name]")
+        ws.cell(row=4, column=1, value="POAM Coordinator:")
+        ws.cell(row=4, column=2, value="[Enter Name]")
+
+        # POAM headers (eMASS standard columns)
+        headers = [
+            'POAM ID',
+            'Control ID',
+            'Weakness Name',
+            'Weakness Description',
+            'Point of Contact',
+            'Resources Required',
+            'Scheduled Completion Date',
+            'Milestone',
+            'Milestone Date',
+            'Risk',
+            'Status',
+            'Comments',
+            'Raw Severity',
+            'Plugin ID',
+            'Affected Hosts',
+            'Remediation'
+        ]
+
+        # Write headers
+        header_row = 6
+        for col, header in enumerate(headers, 1):
+            cell = ws.cell(row=header_row, column=col, value=header)
+            cell.font = Font(bold=True, color="FFFFFF")
+            cell.fill = PatternFill(start_color="366092", end_color="366092", fill_type="solid")
+            cell.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+            cell.border = Border(
+                left=Side(style='thin'),
+                right=Side(style='thin'),
+                top=Side(style='thin'),
+                bottom=Side(style='thin')
+            )
+
+        # Get vulnerability data
+        report = analysis_data.get('report')
+        host_summaries = analysis_data.get('host_summaries', [])
+
+        # Group vulnerabilities by plugin_id to avoid duplicates
+        vuln_groups = {}
+        for host_summary in host_summaries:
+            if report and hasattr(report, 'hosts'):
+                for host in report.hosts:
+                    if host.name == host_summary.ip or host.properties.hostname == host_summary.hostname:
+                        for vuln in host.vulnerabilities:
+                            # Only include Cat I, II, III (severity 2, 3, 4)
+                            if vuln.severity >= 2:
+                                if vuln.plugin_id not in vuln_groups:
+                                    vuln_groups[vuln.plugin_id] = {
+                                        'vuln': vuln,
+                                        'affected_hosts': []
+                                    }
+                                vuln_groups[vuln.plugin_id]['affected_hosts'].append(
+                                    f"{host_summary.hostname} ({host_summary.ip})"
+                                )
+
+        # Write POAM items
+        row = header_row + 1
+        poam_id = 1
+
+        for plugin_id, data in sorted(vuln_groups.items(), key=lambda x: -x[1]['vuln'].severity):
+            vuln = data['vuln']
+            affected_hosts = data['affected_hosts']
+
+            # Determine risk category based on severity
+            if vuln.severity == 4:
+                risk = "Very High"
+                cat = "I"
+                completion_days = 15
+            elif vuln.severity == 3:
+                risk = "High"
+                cat = "II"
+                completion_days = 30
+            elif vuln.severity == 2:
+                risk = "Moderate"
+                cat = "III"
+                completion_days = 90
+            else:
+                risk = "Low"
+                cat = "III"
+                completion_days = 180
+
+            # Calculate scheduled completion date
+            from datetime import timedelta
+            scheduled_date = (datetime.now() + timedelta(days=completion_days)).strftime("%Y-%m-%d")
+
+            # Extract CVE/Control mapping (simplified)
+            control_id = vuln.cve if vuln.cve else f"V-{plugin_id}"
+
+            # Write POAM row
+            ws.cell(row=row, column=1, value=f"POAM-{poam_id:04d}")
+            ws.cell(row=row, column=2, value=control_id)
+            ws.cell(row=row, column=3, value=vuln.plugin_name)
+            ws.cell(row=row, column=4, value=vuln.description[:500] + '...' if len(vuln.description) > 500 else vuln.description)
+            ws.cell(row=row, column=5, value="[Enter POC]")
+            ws.cell(row=row, column=6, value="Staff time, patch management")
+            ws.cell(row=row, column=7, value=scheduled_date)
+            ws.cell(row=row, column=8, value=f"Remediate Cat {cat} finding")
+            ws.cell(row=row, column=9, value=scheduled_date)
+            ws.cell(row=row, column=10, value=risk)
+            ws.cell(row=row, column=11, value="Open")
+            ws.cell(row=row, column=12, value=f"Identified via Nessus scan. {len(affected_hosts)} host(s) affected.")
+            ws.cell(row=row, column=13, value=f"CAT {cat}")
+            ws.cell(row=row, column=14, value=plugin_id)
+            ws.cell(row=row, column=15, value="\n".join(affected_hosts[:5]) + ("..." if len(affected_hosts) > 5 else ""))
+            ws.cell(row=row, column=16, value=vuln.solution[:300] + '...' if len(vuln.solution) > 300 else vuln.solution)
+
+            # Apply formatting
+            for col in range(1, 17):
+                cell = ws.cell(row=row, column=col)
+                cell.alignment = Alignment(vertical="top", wrap_text=True)
+                cell.border = Border(
+                    left=Side(style='thin'),
+                    right=Side(style='thin'),
+                    top=Side(style='thin'),
+                    bottom=Side(style='thin')
+                )
+
+                # Color code by risk
+                if risk == "Very High":
+                    cell.fill = PatternFill(start_color="FFC7CE", end_color="FFC7CE", fill_type="solid")
+                elif risk == "High":
+                    cell.fill = PatternFill(start_color="FFEB9C", end_color="FFEB9C", fill_type="solid")
+
+            row += 1
+            poam_id += 1
+
+        # Auto-adjust column widths
+        column_widths = [12, 15, 30, 40, 20, 25, 15, 25, 15, 12, 12, 40, 12, 12, 30, 40]
+        for i, width in enumerate(column_widths, 1):
+            ws.column_dimensions[chr(64 + i)].width = width
+
+        # Set row heights
+        ws.row_dimensions[header_row].height = 40
+        for r in range(header_row + 1, row):
+            ws.row_dimensions[r].height = 60
+
+        wb.save(output_path)
+        return output_path
+
 
 def export_excel_vulnerability_report(analysis_data: Dict[str, Any], output_path: str = None) -> str:
     """Export vulnerability report as Excel file"""
@@ -533,3 +702,9 @@ def export_excel_emass_inventory(analysis_data: Dict[str, Any], output_path: str
     """Export eMASS inventory as Excel file with macros"""
     exporter = ExcelExporter()
     return exporter.export_emass_inventory(analysis_data, output_path)
+
+
+def export_excel_poam(analysis_data: Dict[str, Any], output_path: str = None) -> str:
+    """Export POAM (Plan of Action & Milestones) as Excel file"""
+    exporter = ExcelExporter()
+    return exporter.export_poam(analysis_data, output_path)
