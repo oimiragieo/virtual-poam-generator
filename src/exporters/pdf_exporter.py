@@ -22,7 +22,7 @@ class PDFExporter:
 
             # Try to use WeasyPrint if available
             try:
-                from weasyprint import HTML, CSS
+                from weasyprint import HTML
                 from weasyprint.text.fonts import FontConfiguration
 
                 # Ensure output directory exists
@@ -37,8 +37,8 @@ class PDFExporter:
 
             except ImportError:
                 # Fallback: save as HTML that can be printed to PDF
-                html_path = output_path.replace('.pdf', '.html')
-                with open(html_path, 'w', encoding='utf-8') as f:
+                html_path = output_path.replace(".pdf", ".html")
+                with open(html_path, "w", encoding="utf-8") as f:
                     f.write(html_content)
                 print(f"WeasyPrint not available. HTML saved to: {html_path}")
                 print("You can open this file in a browser and print to PDF.")
@@ -57,7 +57,9 @@ class PDFExporter:
             raise ValueError(f"Error generating PDF HTML: {e}")
 
 
-def export_pdf_report(analysis_data: Dict[str, Any], output_path: str, template_dir: str = None) -> str:
+def export_pdf_report(
+    analysis_data: Dict[str, Any], output_path: str, template_dir: str = None
+) -> str:
     """Convenience function to export PDF report"""
     exporter = PDFExporter(template_dir)
     return exporter.export(analysis_data, output_path)
@@ -77,7 +79,7 @@ if __name__ == "__main__":
         # Parse and process the file
         report = parse_nessus_file(sys.argv[1])
         analysis_data = process_nessus_report(report)
-        analysis_data['report'] = report
+        analysis_data["report"] = report
 
         # Export to PDF
         output_path = export_pdf_report(analysis_data, sys.argv[2])

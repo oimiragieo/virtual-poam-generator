@@ -26,7 +26,7 @@ class HTMLExporter:
                 os.makedirs(output_dir, exist_ok=True)
 
             # Write to file
-            with open(output_path, 'w', encoding='utf-8') as f:
+            with open(output_path, "w", encoding="utf-8") as f:
                 f.write(html_content)
 
             return output_path
@@ -42,7 +42,9 @@ class HTMLExporter:
             raise ValueError(f"Error generating HTML string: {e}")
 
 
-def export_html_report(analysis_data: Dict[str, Any], output_path: str, template_dir: str = None) -> str:
+def export_html_report(
+    analysis_data: Dict[str, Any], output_path: str, template_dir: str = None
+) -> str:
     """Convenience function to export HTML report"""
     exporter = HTMLExporter(template_dir)
     return exporter.export(analysis_data, output_path)
@@ -62,7 +64,7 @@ if __name__ == "__main__":
         # Parse and process the file
         report = parse_nessus_file(sys.argv[1])
         analysis_data = process_nessus_report(report)
-        analysis_data['report'] = report
+        analysis_data["report"] = report
 
         # Export to HTML
         output_path = export_html_report(analysis_data, sys.argv[2])
