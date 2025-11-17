@@ -9,15 +9,7 @@ import unittest
 from pathlib import Path
 
 # Add src to path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
-
-from parser.nessus_parser import parse_nessus_file, NessusParser
-from processor.vulnerability_processor import (
-    process_nessus_report,
-    VulnerabilityProcessor,
-)
-from exporters.html_exporter import export_html_report
-from exporters.csv_exporter import export_csv_report, export_csv_summary
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))  # noqa: E402
 
 
 class TestVISSM(unittest.TestCase):
@@ -33,13 +25,13 @@ class TestVISSM(unittest.TestCase):
 
     def test_nessus_parser_import(self):
         """Test that Nessus parser can be imported"""
-        from parser.nessus_parser import NessusParser, parse_nessus_file
+        from parser.nessus_parser import NessusParser, parse_nessus_file  # noqa: F401
 
         self.assertTrue(True)
 
     def test_vulnerability_processor_import(self):
         """Test that vulnerability processor can be imported"""
-        from processor.vulnerability_processor import (
+        from processor.vulnerability_processor import (  # noqa: F401
             VulnerabilityProcessor,
             process_nessus_report,
         )
@@ -48,8 +40,11 @@ class TestVISSM(unittest.TestCase):
 
     def test_exporters_import(self):
         """Test that exporters can be imported"""
-        from exporters.html_exporter import export_html_report
-        from exporters.csv_exporter import export_csv_report, export_csv_summary
+        from exporters.html_exporter import export_html_report  # noqa: F401
+        from exporters.csv_exporter import (  # noqa: F401
+            export_csv_report,
+            export_csv_summary,
+        )
 
         self.assertTrue(True)
 
@@ -68,7 +63,7 @@ class TestVISSM(unittest.TestCase):
         )
 
         self.assertEqual(result.returncode, 0)
-        self.assertIn("vISSM", result.stdout)
+        self.assertIn("Virtual POAM Generator", result.stdout)
 
     def test_cli_version(self):
         """Test that CLI shows version"""
@@ -85,7 +80,7 @@ class TestVISSM(unittest.TestCase):
         )
 
         self.assertEqual(result.returncode, 0)
-        self.assertIn("vISSM v1.0", result.stdout)
+        self.assertIn("Virtual POAM Generator v1.0", result.stdout)
 
     def test_nessus_parser_structure(self):
         """Test Nessus parser data structures"""
@@ -149,6 +144,7 @@ class TestVISSM(unittest.TestCase):
             Vulnerability,
             HostProperties,
         )
+        from processor.vulnerability_processor import VulnerabilityProcessor
 
         # Create test data
         props = HostProperties(
@@ -229,6 +225,8 @@ class TestVISSM(unittest.TestCase):
             Vulnerability,
             HostProperties,
         )
+        from processor.vulnerability_processor import process_nessus_report
+        from exporters.html_exporter import export_html_report
 
         # Create minimal test data
         props = HostProperties(
@@ -297,6 +295,8 @@ class TestVISSM(unittest.TestCase):
             Vulnerability,
             HostProperties,
         )
+        from processor.vulnerability_processor import process_nessus_report
+        from exporters.csv_exporter import export_csv_report
 
         # Create minimal test data
         props = HostProperties(

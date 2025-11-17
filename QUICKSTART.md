@@ -61,12 +61,18 @@ python cli.py scan.nessus -o inventory.xlsm -r emass-inventory
 python cli.py scan.nessus --summary -o summary.csv
 ```
 
+### STIG Checklist (DISA STIG Viewer Format)
+```bash
+python cli.py scan.nessus -o stig_findings.ckl -r stig-checklist
+```
+
 ### All Reports at Once
 ```bash
 python cli.py scan.nessus -o poam.xlsx -r poam
 python cli.py scan.nessus -o vulns.xlsx -r vulnerability
 python cli.py scan.nessus -o inventory.xlsm -r emass-inventory
 python cli.py scan.nessus -o tests.xlsx -r ivv-test-plan
+python cli.py scan.nessus -o stig.ckl -r stig-checklist
 ```
 
 ## Need Help?
@@ -111,6 +117,7 @@ python cli.py scan.nessus -o output.xlsx -r poam --verbose
 | **ivv-test-plan** | After remediation verification |
 | **hw-sw-inventory** | Detailed asset tracking |
 | **cnet** | Network compliance reporting |
+| **stig-checklist** | DISA STIG Viewer format (.ckl file) |
 
 ## Pro Tips
 

@@ -13,12 +13,15 @@ from pathlib import Path
 # Add src to path for imports
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
 
-from parser.nessus_parser import parse_nessus_file
-from processor.vulnerability_processor import process_nessus_report
-from exporters.html_exporter import export_html_report
-from exporters.pdf_exporter import export_pdf_report
-from exporters.csv_exporter import export_csv_report, export_csv_summary
-from exporters.excel_exporter import (
+from parser.nessus_parser import parse_nessus_file  # noqa: E402
+from processor.vulnerability_processor import process_nessus_report  # noqa: E402
+from exporters.html_exporter import export_html_report  # noqa: E402
+from exporters.pdf_exporter import export_pdf_report  # noqa: E402
+from exporters.csv_exporter import (  # noqa: E402
+    export_csv_report,
+    export_csv_summary,
+)
+from exporters.excel_exporter import (  # noqa: E402
     export_excel_vulnerability_report,
     export_excel_ivv_test_plan,
     export_excel_cnet_report,
@@ -26,7 +29,7 @@ from exporters.excel_exporter import (
     export_excel_emass_inventory,
     export_excel_poam,
 )
-from exporters.stig_exporter import export_stig_checklist
+from exporters.stig_exporter import export_stig_checklist  # noqa: E402
 
 
 def main():

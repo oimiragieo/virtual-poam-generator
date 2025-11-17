@@ -246,7 +246,51 @@ class HTMLReportTemplate(ReportTemplate):
 
         html += """
     </table>
+"""
 
+        # Add detailed vulnerabilities section if report data is available
+        report = data.get("report")
+        if report and hasattr(report, "hosts"):
+            html += """
+    <h2>Detailed Vulnerabilities</h2>
+"""
+            for host in report.hosts:
+                if host.vulnerabilities:
+                    html += f"""
+    <h3>{host.properties.hostname or host.name}</h3>
+    <table>
+        <tr>
+            <th>Plugin ID</th>
+            <th>Vulnerability</th>
+            <th>Severity</th>
+            <th>Port</th>
+            <th>CVE</th>
+        </tr>
+"""
+                    for vuln in host.vulnerabilities:
+                        severity_names = {
+                            0: "Info",
+                            1: "Low",
+                            2: "Medium",
+                            3: "High",
+                            4: "Critical",
+                        }
+                        severity_name = severity_names.get(vuln.severity, "Unknown")
+                        severity_class = severity_name.lower()
+                        html += f"""
+        <tr class="vuln-row severity-{severity_class}">
+            <td>{vuln.plugin_id}</td>
+            <td>{vuln.plugin_name}</td>
+            <td class="{severity_class}">{severity_name}</td>
+            <td>{vuln.port}/{vuln.protocol}</td>
+            <td>{vuln.cve or 'N/A'}</td>
+        </tr>
+"""
+                    html += """
+    </table>
+"""
+
+        html += """
     <h2>Recommendations</h2>
     <ul>
 """
