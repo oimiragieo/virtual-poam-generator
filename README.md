@@ -89,9 +89,17 @@ Automatically creates Plan of Action & Milestones documents with:
 - Dropdown lists for standard fields
 - Multiple worksheet support
 
-### 5. Additional Exports
+### 5. STIG and NIST 800-53 Compliance
+- Automated STIG ID mapping for vulnerabilities
+- NIST 800-53 Rev 5 control mapping
+- CVE enrichment with CVSS scores
+- DISA STIG Viewer checklist generation (.ckl format)
+- Control Correlation Identifier (CCI) references
+- RMF baseline support (LOW, MODERATE, HIGH)
+
+### 6. Additional Exports
 - CSV summaries for executive reporting
-- HTML reports with interactive features
+- HTML reports with interactive features and detailed vulnerability listings
 - PDF exports (with optional WeasyPrint)
 - Multiple output formats
 
@@ -105,6 +113,7 @@ Automatically creates Plan of Action & Milestones documents with:
 | **HW/SW Inventory** | `-r hw-sw-inventory` | Detailed asset inventory | ATO packages, asset management |
 | **eMASS Inventory** | `-r emass-inventory` | eMASS-ready import template | Direct eMASS import |
 | **CNET Report** | `-r cnet` | CNET-formatted report | Network compliance |
+| **STIG Checklist** | `-r stig-checklist` | DISA STIG Viewer format (.ckl) | STIG compliance verification |
 
 ## 🛠️ CLI Options
 
@@ -267,8 +276,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🚀 Roadmap
 
-- [ ] STIG compliance mapping
-- [ ] Automated control mapping to NIST 800-53
+- [x] STIG compliance mapping (✓ Completed - see `src/compliance/stig_mapper.py`)
+- [x] Automated control mapping to NIST 800-53 (✓ Completed - see `src/compliance/nist_mapper.py`)
+- [x] STIG Viewer checklist export (✓ Completed - use `-r stig-checklist`)
 - [ ] Integration with ACAS exports
 - [ ] Dashboard web interface
 - [ ] Automated RMF package generation

@@ -3,11 +3,10 @@
 Analyze vISSM-generated Excel files to understand their structure
 """
 
-import pandas as pd
-import openpyxl
 from openpyxl import load_workbook
 import os
 from datetime import datetime
+
 
 def analyze_excel_file(filepath):
     """Analyze the structure of an Excel file"""
@@ -46,7 +45,7 @@ def analyze_excel_file(filepath):
                 print(f"Row {row}: {row_data}")
 
             # Look for headers (non-empty cells in first few rows)
-            print(f"\nHeader analysis:")
+            print("\nHeader analysis:")
             for row in range(1, min(4, max_row + 1)):
                 headers = []
                 for col in range(1, min(21, max_col + 1)):  # First 20 columns
@@ -61,6 +60,7 @@ def analyze_excel_file(filepath):
     except Exception as e:
         print(f"Error analyzing {filepath}: {e}")
 
+
 def analyze_all_vissm_files():
     """Analyze all vISSM-generated Excel files"""
     files = [
@@ -68,11 +68,11 @@ def analyze_all_vissm_files():
         "vISSM_Detailed_Inventory_2021-05-27-0034.xlsx",
         "vISSM_IV&V_Test_Plan_2021-05-25-0720.xlsx",
         "vISSM_Vulnerability_Report_2021-05-26-1959.xlsx",
-        "vISSM_eMASS_Inventory_2021-05-25-0126.xlsm"
+        "vISSM_eMASS_Inventory_2021-05-25-0126.xlsm",
     ]
 
     print("vISSM EXCEL FILE ANALYSIS")
-    print("="*80)
+    print("=" * 80)
     print(f"Analysis started at: {datetime.now()}")
 
     for filename in files:
@@ -84,6 +84,7 @@ def analyze_all_vissm_files():
     print(f"\n{'='*80}")
     print("ANALYSIS COMPLETE")
     print(f"{'='*80}")
+
 
 if __name__ == "__main__":
     analyze_all_vissm_files()

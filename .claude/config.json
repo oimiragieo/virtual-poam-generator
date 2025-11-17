@@ -1,0 +1,106 @@
+{
+  "project": {
+    "name": "vISSM - Virtual POAM Generator",
+    "type": "python-cli",
+    "description": "DoD cybersecurity compliance automation tool - converts Nessus scans to POAMs and STIG checklists",
+    "version": "1.0.0",
+    "python_version": "3.8+"
+  },
+  "structure": {
+    "entry_point": "cli.py",
+    "main_modules": [
+      "src/parser/nessus_parser.py",
+      "src/processor/vulnerability_processor.py",
+      "src/exporters/excel_exporter.py"
+    ],
+    "architecture": "pipeline",
+    "patterns": [
+      "dataclass-based domain model",
+      "strategy pattern for exporters",
+      "template method for reports"
+    ]
+  },
+  "development": {
+    "test_command": "python -m pytest tests/ -v",
+    "format_command": "python -m black .",
+    "lint_command": "python -m flake8 . --max-line-length=88 --extend-ignore=E203,W503",
+    "install_command": "pip install -r requirements.txt && pip install -e .",
+    "test_framework": "pytest",
+    "code_formatter": "black",
+    "linter": "flake8"
+  },
+  "coding_standards": {
+    "style_guide": "PEP 8",
+    "line_length": 88,
+    "naming_conventions": {
+      "classes": "PascalCase",
+      "functions": "snake_case",
+      "constants": "UPPER_SNAKE_CASE",
+      "files": "snake_case"
+    },
+    "docstrings": "required for all modules, classes, and public functions",
+    "type_hints": "use dataclasses for data structures"
+  },
+  "context": {
+    "domain": "DoD cybersecurity compliance",
+    "users": "GRC professionals, ISSOs, ISSMs",
+    "key_concepts": [
+      "POAM (Plan of Action & Milestones)",
+      "STIG (Security Technical Implementation Guide)",
+      "NIST 800-53 security controls",
+      "eMASS (Enterprise Mission Assurance Support Service)",
+      "RMF (Risk Management Framework)",
+      "CAT I/II/III severity levels"
+    ],
+    "input_format": ".nessus XML files from Tenable Nessus scanner",
+    "output_formats": [
+      "Excel (.xlsx, .xlsm)",
+      "STIG Viewer (.ckl)",
+      "CSV",
+      "HTML",
+      "PDF"
+    ]
+  },
+  "ai_hints": {
+    "read_first": [
+      "claude.md",
+      "README.md",
+      "QUICKSTART.md"
+    ],
+    "critical_files": [
+      "cli.py - main entry point and orchestration",
+      "src/parser/nessus_parser.py - data model definitions",
+      "src/processor/vulnerability_processor.py - risk analysis logic",
+      "src/exporters/excel_exporter.py - POAM generation (most complex)"
+    ],
+    "common_tasks": {
+      "add_report_type": "Create exporter function, import in cli.py, add to argparse choices, route in main()",
+      "fix_poam_formatting": "Edit excel_exporter.py::export_excel_poam(), uses openpyxl",
+      "update_stig_mappings": "Edit src/compliance/stig_mapper.py::PLUGIN_TO_STIG dict",
+      "add_nist_controls": "Edit src/compliance/nist_mapper.py::CVE_TO_CONTROLS dict"
+    },
+    "data_flow": "cli.py → parse_nessus_file() → process_nessus_report() → export_*() → output file",
+    "test_strategy": "Create in-memory NessusReport objects, process through pipeline, verify output files exist"
+  },
+  "dependencies": {
+    "production": [
+      "jinja2 (templates)",
+      "lxml (XML parsing)",
+      "openpyxl (Excel)",
+      "xlsxwriter (Excel alt)",
+      "pandas (data analysis)",
+      "weasyprint (PDF - optional)"
+    ],
+    "development": [
+      "pytest (testing)",
+      "black (formatting)",
+      "flake8 (linting)"
+    ]
+  },
+  "status": {
+    "tests": "9/9 passing",
+    "code_quality": "black formatted, 25 flake8 warnings (E501 only)",
+    "production_ready": true,
+    "open_issues": []
+  }
+}
