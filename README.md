@@ -21,7 +21,7 @@ vISSM bridges the gap between vulnerability scanning and compliance documentatio
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/virtual-poam-generator.git
+git clone https://github.com/oimiragieo/virtual-poam-generator.git
 cd virtual-poam-generator
 
 # Install dependencies
@@ -119,7 +119,7 @@ Automatically creates Plan of Action & Milestones documents with:
 
 ```bash
 usage: cli.py [-h] [-o OUTPUT] [-f {html,pdf,csv,xlsx}]
-              [-r {vulnerability,poam,ivv-test-plan,cnet,hw-sw-inventory,emass-inventory}]
+              [-r {vulnerability,poam,ivv-test-plan,cnet,hw-sw-inventory,emass-inventory,stig-checklist}]
               [--summary] [--template-dir TEMPLATE_DIR] [--verbose] [--version]
               input_file
 
@@ -265,7 +265,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Create an issue for bug reports
 - Use discussions for feature requests
 - Check QUICKSTART.md for quick reference
-- Review examples/ directory for sample outputs
+- Review documentation for detailed guidance
 
 ## 🔒 Security & Compliance
 
@@ -337,7 +337,7 @@ done
 ## ❓ FAQ
 
 **Q: Can this replace KARP.exe?**
-A: Yes! vISSM provides the same functionality as KARP.exe but is open-source, cross-platform, and includes additional DoD-specific features like POAM generation.
+A: Yes! vISSM provides the same functionality as KARP.exe (a proprietary Windows-only DoD vulnerability assessment tool) but is open-source, cross-platform, and includes additional DoD-specific features like POAM generation.
 
 **Q: Does this work with ACAS exports?**
 A: Currently supports .nessus format. ACAS .nessus exports work fine.

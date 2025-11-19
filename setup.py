@@ -30,11 +30,11 @@ setup(
     name="virtual-poam-generator",
     version="1.0.0",
     author="Virtual POAM Generator Team",
-    author_email="support@example.com",
+    author_email="poam-generator@users.noreply.github.com",
     description="DoD eMASS compliance tool - Generates POAMs and reports from Nessus scans",
     long_description=read_readme(),
     long_description_content_type="text/markdown",
-    url="https://github.com/your-username/virtual-poam-generator",
+    url="https://github.com/oimiragieo/virtual-poam-generator",
     packages=find_packages(),
     classifiers=[
         "Development Status :: 4 - Beta",
