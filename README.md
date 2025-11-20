@@ -206,22 +206,33 @@ The POAM generator automatically:
 ```
 virtual-poam-generator/
 ├── cli.py                      # Command-line interface
+├── setup.py                    # Package configuration
+├── requirements.txt            # Python dependencies
 ├── src/
 │   ├── parser/
 │   │   └── nessus_parser.py   # Nessus XML parser
 │   ├── processor/
-│   │   └── vulnerability_processor.py  # Data analysis
+│   │   └── vulnerability_processor.py  # Vulnerability analysis
+│   ├── compliance/             # DoD compliance mapping
+│   │   ├── stig_mapper.py     # DISA STIG ID mapping
+│   │   ├── nist_mapper.py     # NIST 800-53 Rev 5 controls
+│   │   └── cve_database.py    # CVE enrichment database
 │   ├── exporters/
 │   │   ├── excel_exporter.py  # POAM, inventory, reports
+│   │   ├── stig_exporter.py   # STIG checklist (.ckl)
 │   │   ├── csv_exporter.py    # CSV exports
 │   │   ├── html_exporter.py   # HTML reports
 │   │   └── pdf_exporter.py    # PDF generation
 │   └── templates/
 │       └── template_engine.py # Jinja2 templates
-├── tests/                     # Test suite
-├── README.md                  # This file
-├── QUICKSTART.md             # Quick start guide
-└── requirements.txt          # Dependencies
+├── tests/
+│   └── test_vissm.py          # Test suite
+├── README.md                  # Project documentation
+├── QUICKSTART.md              # Quick start guide
+├── CONTRIBUTING.md            # Contribution guidelines
+├── CHANGELOG.md               # Version history
+├── LICENSE                    # MIT License
+└── claude.md                  # Developer documentation
 ```
 
 ## 🤝 Contributing
