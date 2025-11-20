@@ -8,21 +8,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- Comprehensive codebase audit report (CODEBASE_AUDIT_REPORT.md)
 - MIT License file
 - Contributing guidelines (CONTRIBUTING.md)
 - This changelog
 - EditorConfig for consistent code formatting across editors
 
 ### Changed
-- Updated README.md to fix placeholder URLs and add missing CLI options
+- Updated README.md to accurately reflect current codebase structure
+- Updated README.md architecture section to include compliance module
 - Updated setup.py with correct repository URL and email
 - Improved documentation consistency across all files
+- Cleaned up root folder by removing outdated documentation files
 
 ### Fixed
-- README.md now correctly documents `stig-checklist` report type
-- README.md references to non-existent examples/ directory removed
-- KARP.exe explanation added to FAQ section
+- README.md architecture diagram now accurately shows all modules
+- QUICKSTART.md GitHub URL updated to correct repository
+- Removed outdated audit and review documents from root folder
 
 ## [1.0.0] - 2024-11-15
 
@@ -57,8 +58,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - README.md with feature overview and examples
   - QUICKSTART.md for quick reference
   - claude.md for architecture and development guide
-  - GEMINI.md for Gemini AI context
-  - COMPREHENSIVE_REVIEW_SUMMARY.md with detailed code review
+  - CONTRIBUTING.md with contribution guidelines
+  - CHANGELOG.md for version tracking
   - Claude AI rules (project_context.md, coding_standards.md)
 - Python 3.8+ support
 - Cross-platform compatibility (Windows, Linux, macOS)

@@ -328,8 +328,6 @@ For more troubleshooting, use `--verbose` flag to see detailed processing inform
 - **QUICKSTART.md**: Quick reference, common commands
 - **CONTRIBUTING.md**: Development guidelines, PR process, code standards
 - **CHANGELOG.md**: Version history, release notes
-- **CODEBASE_AUDIT_REPORT.md**: Comprehensive codebase audit findings
-- **COMPREHENSIVE_REVIEW_SUMMARY.md**: Detailed code review, architecture decisions
 - **claude.md** (this file): Architecture and development guide
 - **.claude/rules/**: Project context and coding standards for AI assistants
 

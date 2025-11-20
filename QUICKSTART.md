@@ -6,7 +6,7 @@ Get started in 5 minutes!
 
 ```bash
 # Clone the repo
-git clone https://github.com/yourusername/virtual-poam-generator.git
+git clone https://github.com/oimiragieo/virtual-poam-generator.git
 cd virtual-poam-generator
 
 # Install dependencies
