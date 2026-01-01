@@ -8,7 +8,7 @@
 
 **Target Users**: DoD GRC professionals, ISSOs, ISSMs, cybersecurity teams working with eMASS.
 
-**Current Version**: 1.0.0 (Production-ready)
+**Current Version**: 1.1.0 (Enterprise-ready with complete NIST 800-53 Rev 5)
 **Test Status**: ✅ 9/9 tests passing (100% pass rate)
 **Code Quality**: PEP 8 compliant with Black formatting
 
@@ -135,10 +135,14 @@ def export_stig_checklist(analysis_data: Dict[str, Any], output_file: str) -> st
 - Returns `STIGFinding` objects with Rule ID, CCI, severity (CAT I/II/III)
 - Used by `stig_exporter.py` to generate .ckl files for STIG Viewer
 
-### NIST 800-53 Mapping
-- `nist_mapper.py` maps CVEs and vulnerability categories to controls
+### NIST 800-53 Mapping (Enterprise-Ready)
+- `nist_mapper.py` provides comprehensive NIST SP 800-53 Rev 5 compliance mapping
+- **All 20 Control Families**: AC, AT, AU, CA, CM, CP, IA, IR, MA, MP, PE, PL, PM, PS, PT, RA, SA, SC, SI, SR
+- **~150+ Control Definitions**: Complete control catalog with priorities (P1/P2/P3) and baselines
+- **~50 CVE Mappings**: Major vulnerabilities (Heartbleed, Log4Shell, EternalBlue, etc.)
+- **~50 Vulnerability Category Mappings**: Common vulnerability types to controls
 - Supports RMF baselines: LOW, MODERATE, HIGH
-- Control families: AC, CM, IA, SC, SI, etc.
+- Returns `NISTControl` objects with control metadata, related controls, and family info
 
 ## File Conventions
 
@@ -193,10 +197,12 @@ python -m pytest tests/test_vissm.py::TestVISSM::test_html_export -v
 
 ## Known Limitations
 
-1. **STIG/NIST mappings are hardcoded**: Not dynamic from DISA/NIST databases
+1. **STIG mappings are hardcoded**: Plugin-to-STIG mappings not dynamic from DISA database
 2. **Line length**: Some lines >88 chars (acceptable, marked with # noqa: E501 if critical)
 3. **HTML template**: Inline in `template_engine.py` (no separate .html files)
-4. **No external APIs**: Fully offline (pro and con)
+4. **No external APIs**: Fully offline (pro and con - supports air-gapped networks)
+
+**Note**: NIST 800-53 Rev 5 mappings are now comprehensive with all 20 control families.
 
 ## Troubleshooting
 
@@ -266,9 +272,18 @@ python -m pytest tests/test_vissm.py::TestVISSM::test_html_export -v
 - **CVE Enrichment**: CVSS scores, CWE mappings, exploitability data
 - **DoD Formatting**: Classification banners, color coding, eMASS column structure
 
-### Recent Additions (v1.0.0)
+### Recent Additions (v1.0.0+)
 - ✅ **STIG Mapper**: Maps Nessus plugins and CVEs to DISA STIG findings with CAT I/II/III categorization
-- ✅ **NIST Mapper**: Maps vulnerabilities to NIST 800-53 Rev 5 security controls
+- ✅ **Enterprise NIST Mapper**: Complete NIST 800-53 Rev 5 with all 20 control families:
+  - AC (Access Control), AT (Awareness & Training), AU (Audit & Accountability)
+  - CA (Assessment, Authorization & Monitoring), CM (Configuration Management)
+  - CP (Contingency Planning), IA (Identification & Authentication)
+  - IR (Incident Response), MA (Maintenance), MP (Media Protection)
+  - PE (Physical & Environmental Protection), PL (Planning)
+  - PM (Program Management), PS (Personnel Security), PT (PII Processing & Transparency)
+  - RA (Risk Assessment), SA (System & Services Acquisition)
+  - SC (System & Communications Protection), SI (System & Information Integrity)
+  - SR (Supply Chain Risk Management)
 - ✅ **CVE Database**: Hardcoded database of critical CVEs with enriched metadata
 - ✅ **Module Documentation**: Comprehensive claude.md files for each module
 - ✅ **Contributing Guidelines**: CONTRIBUTING.md with development workflow
@@ -344,6 +359,15 @@ For more troubleshooting, use `--verbose` flag to see detailed processing inform
 - **RMF Knowledge Service**: https://rmfks.osd.mil/
 
 ## Version History
+
+- **v1.1.0** (2026-01-01): Enterprise NIST 800-53 Rev 5 Update
+  - **Enterprise-ready NIST mapper** with all 20 control families
+  - ~150+ control definitions with priorities and baselines
+  - ~50 CVE-to-control mappings for major vulnerabilities
+  - ~50 vulnerability category-to-control mappings
+  - Enhanced `NISTControl` dataclass with family info and related controls
+  - New `ControlFamily` dataclass for control family metadata
+  - New methods: `get_control_family()`, `get_all_control_families()`, `get_controls_by_family()`, `get_control_priority()`, `get_controls_by_priority()`, `get_vulnerability_controls_with_details()`
 
 - **v1.0.0** (2024-11-15): Initial release
   - Complete 4-stage pipeline (Parse → Process → Comply → Export)
