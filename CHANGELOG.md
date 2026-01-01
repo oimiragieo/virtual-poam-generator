@@ -7,10 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+_No unreleased changes._
+
+## [1.1.0] - 2026-01-01
+
 ### Added
+- **Enterprise-ready NIST 800-53 Rev 5 mapper** with complete coverage:
+  - All 20 control families: AC, AT, AU, CA, CM, CP, IA, IR, MA, MP, PE, PL, PM, PS, PT, RA, SA, SC, SI, SR
+  - ~150+ control definitions with priorities (P1/P2/P3) and baselines (LOW/MODERATE/HIGH)
+  - ~50 CVE-to-control mappings for major vulnerabilities (Heartbleed, Log4Shell, EternalBlue, etc.)
+  - ~50 vulnerability category-to-control mappings
+- New `NISTControl` dataclass fields: `family_id`, `related_controls`
+- New `ControlFamily` dataclass for control family metadata
+- New NIST mapper methods:
+  - `get_control_family()` - Get family metadata by ID
+  - `get_all_control_families()` - List all 20 control families
+  - `get_controls_by_family()` - Get controls for a specific family
+  - `get_control_priority()` - Get priority (P1/P2/P3) for a control
+  - `get_controls_by_priority()` - Filter controls by priority level
+  - `get_vulnerability_controls_with_details()` - Enhanced control lookup with full metadata
+- Convenience functions: `get_nist_control_families()`, `map_vulnerability_to_nist()`
 - MIT License file
 - Contributing guidelines (CONTRIBUTING.md)
-- This changelog
 - EditorConfig for consistent code formatting across editors
 
 ### Changed
@@ -19,6 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated setup.py with correct repository URL and email
 - Improved documentation consistency across all files
 - Cleaned up root folder by removing outdated documentation files
+- Enhanced claude.md with enterprise NIST mapper documentation
 
 ### Fixed
 - README.md architecture diagram now accurately shows all modules
@@ -101,7 +120,7 @@ See README.md for the complete roadmap. Planned features include:
 - [ ] Integration with ACAS exports
 - [ ] Dashboard web interface
 - [ ] Automated RMF package generation
-- [ ] Enhanced STIG mapping coverage
+- [x] ~~Enhanced STIG mapping coverage~~ (v1.1.0 - Enterprise NIST mapper)
 - [ ] Real-time vulnerability database updates
 - [ ] Custom report templates
 - [ ] Multi-format batch exports

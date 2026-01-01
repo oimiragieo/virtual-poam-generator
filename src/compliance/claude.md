@@ -12,7 +12,7 @@ The `compliance` module is **Stage 3** of the vISSM pipeline. It maps vulnerabil
 src/compliance/
 ├── __init__.py           # Module exports
 ├── stig_mapper.py       # DISA STIG mapping (245 lines)
-├── nist_mapper.py       # NIST 800-53 Rev 5 mapping (237 lines)
+├── nist_mapper.py       # NIST 800-53 Rev 5 mapping (~2,500 lines) - Enterprise-ready
 └── cve_database.py      # CVE enrichment database (121 lines)
 ```
 
@@ -154,9 +154,16 @@ severity_map = {
 
 ---
 
-### 2. NIST Mapper (`nist_mapper.py`)
+### 2. NIST Mapper (`nist_mapper.py`) - Enterprise-Ready
 
-Maps vulnerabilities to **NIST SP 800-53 Rev 5 security controls**.
+Maps vulnerabilities to **NIST SP 800-53 Rev 5 security controls** with complete coverage of all 20 control families.
+
+**Version 1.1.0 Features:**
+- ~150+ control definitions across all 20 families
+- ~50 CVE-to-control mappings for major vulnerabilities
+- ~50 vulnerability category-to-control mappings
+- Control priorities (P1, P2, P3) and baselines (LOW, MODERATE, HIGH)
+- Related control cross-references
 
 #### Data Classes
 
@@ -165,13 +172,14 @@ Represents a NIST 800-53 security control.
 
 **Fields:**
 ```python
-control_id: str           # Control identifier (e.g., "AC-2")
-control_name: str         # Full name (e.g., "Account Management")
-family: str              # Control family (e.g., "Access Control")
-priority: str            # "P1", "P2", or "P3"
-baselines: List[str]     # ["LOW", "MODERATE", "HIGH"]
-description: str         # Control description
-related_controls: List[str]  # Related control IDs
+control_id: str                      # Control identifier (e.g., "AC-2")
+control_name: str                    # Full name (e.g., "Account Management")
+family: str                          # Control family name (e.g., "Access Control")
+family_id: str                       # Control family ID (e.g., "AC")
+priority: str                        # "P1", "P2", or "P3"
+baseline: List[str]                  # ["LOW", "MODERATE", "HIGH"]
+description: str                     # Control description
+related_controls: List[str]          # Related control IDs
 ```
 
 **Example:**
@@ -180,38 +188,59 @@ control = NISTControl(
     control_id="AC-2",
     control_name="Account Management",
     family="Access Control",
+    family_id="AC",
     priority="P1",
-    baselines=["LOW", "MODERATE", "HIGH"],
-    description="The organization manages information system accounts...",
+    baseline=["LOW", "MODERATE", "HIGH"],
+    description="Manage system accounts including creating, enabling, modifying...",
     related_controls=["AC-3", "AC-5", "AU-9"]
 )
+```
+
+##### `ControlFamily`
+Represents a NIST 800-53 control family (NEW in v1.1.0).
+
+**Fields:**
+```python
+family_id: str              # Family identifier (e.g., "AC")
+family_name: str            # Full name (e.g., "Access Control")
+description: str            # Family description
+control_count: int          # Number of controls in family
 ```
 
 #### Classes
 
 ##### `NISTMapper`
-Main NIST control mapping class.
+Main NIST control mapping class with enterprise-grade coverage.
 
 **Attributes:**
 
+###### `controls: Dict[str, NISTControl]`
+Comprehensive dictionary of ~150+ NIST controls.
+
+###### `control_families: Dict[str, ControlFamily]`
+Metadata for all 20 NIST 800-53 Rev 5 control families.
+
 ###### `cve_to_controls: Dict[str, List[str]]`
-Maps CVE identifiers to NIST control IDs.
+Maps ~50 CVE identifiers to NIST control IDs.
 
 **Example Mappings:**
 ```python
-"CVE-2014-0160": ["SC-13", "SC-23"],  # Heartbleed: Cryptographic Protection
-"CVE-2017-0144": ["SC-7", "SC-8"],    # EternalBlue: Boundary Protection
-"CVE-2021-44228": ["SI-2", "SI-10"]   # Log4Shell: Flaw Remediation
+"CVE-2014-0160": ["SC-8", "SC-13", "SC-17"],   # Heartbleed
+"CVE-2017-0144": ["SC-7", "SI-2", "SI-3"],     # EternalBlue
+"CVE-2021-44228": ["SI-2", "SI-10", "CM-7"],   # Log4Shell
+"CVE-2023-44487": ["SC-5", "SC-7", "SI-4"],    # HTTP/2 Rapid Reset
+"CVE-2024-3094": ["SA-12", "SR-3", "SR-4"]     # XZ Utils Backdoor
 ```
 
-###### `family_to_controls: Dict[str, List[str]]`
-Maps Nessus plugin families to relevant NIST controls.
+###### `category_to_controls: Dict[str, List[str]]`
+Maps ~50 vulnerability categories to relevant NIST controls.
 
 **Example Mappings:**
 ```python
-"Windows": ["CM-6", "SI-2", "IA-5"],
-"Web Servers": ["SC-5", "SC-7", "SI-10"],
-"Databases": ["SC-8", "SI-2", "AU-9"]
+"authentication_bypass": ["IA-2", "IA-5", "IA-8"],
+"sql_injection": ["SI-10", "SI-16", "SA-11"],
+"buffer_overflow": ["SI-16", "SA-11", "SI-17"],
+"weak_cryptography": ["SC-8", "SC-12", "SC-13"]
 ```
 
 **Methods:**
@@ -219,31 +248,69 @@ Maps Nessus plugin families to relevant NIST controls.
 ###### `get_controls_for_cve(cve: str) -> List[NISTControl]`
 Get NIST controls for a CVE.
 
-**Parameters:**
-- `cve`: CVE identifier
+###### `get_controls_for_category(category: str) -> List[NISTControl]`
+Get NIST controls for a vulnerability category.
 
-**Returns:**
-- List of `NISTControl` objects
+###### `get_control_family(family_id: str) -> Optional[ControlFamily]`
+Get control family metadata by ID (NEW in v1.1.0).
 
-###### `get_controls_for_family(family: str) -> List[NISTControl]`
-Get NIST controls for a plugin family.
+###### `get_all_control_families() -> List[ControlFamily]`
+Get all 20 control families (NEW in v1.1.0).
 
-**Parameters:**
-- `family`: Nessus plugin family name
+###### `get_controls_by_family(family_id: str) -> List[NISTControl]`
+Get all controls for a specific family (NEW in v1.1.0).
 
-**Returns:**
-- List of `NISTControl` objects
+###### `get_control_priority(control_id: str) -> str`
+Get priority (P1/P2/P3) for a control (NEW in v1.1.0).
 
-#### NIST Control Families
+###### `get_controls_by_priority(priority: str) -> List[NISTControl]`
+Filter controls by priority level (NEW in v1.1.0).
+
+###### `get_vulnerability_controls_with_details(cve: str, category: str) -> List[NISTControl]`
+Enhanced control lookup with full metadata (NEW in v1.1.0).
+
+#### Convenience Functions
+
+```python
+# Get all 20 control family names
+families = get_nist_control_families()
+
+# Map vulnerability to NIST controls
+controls = map_vulnerability_to_nist(cve="CVE-2021-44228")
+```
+
+#### NIST 800-53 Rev 5 Control Families (All 20)
 
 | Family Code | Family Name | Example Controls |
 |-------------|-------------|------------------|
-| **AC** | Access Control | AC-2 (Account Management) |
-| **AU** | Audit and Accountability | AU-2 (Auditable Events) |
-| **CM** | Configuration Management | CM-6 (Configuration Settings) |
-| **IA** | Identification and Authentication | IA-5 (Authenticator Management) |
-| **SC** | System and Communications Protection | SC-7 (Boundary Protection) |
-| **SI** | System and Information Integrity | SI-2 (Flaw Remediation) |
+| **AC** | Access Control | AC-2 (Account Management), AC-3 (Access Enforcement) |
+| **AT** | Awareness and Training | AT-2 (Literacy Training), AT-3 (Role-Based Training) |
+| **AU** | Audit and Accountability | AU-2 (Event Logging), AU-6 (Audit Record Review) |
+| **CA** | Assessment, Authorization and Monitoring | CA-2 (Assessments), CA-7 (Continuous Monitoring) |
+| **CM** | Configuration Management | CM-2 (Baseline Configuration), CM-6 (Configuration Settings) |
+| **CP** | Contingency Planning | CP-2 (Contingency Plan), CP-9 (System Backup) |
+| **IA** | Identification and Authentication | IA-2 (Multi-Factor Auth), IA-5 (Authenticator Management) |
+| **IR** | Incident Response | IR-4 (Incident Handling), IR-6 (Incident Reporting) |
+| **MA** | Maintenance | MA-2 (Controlled Maintenance), MA-4 (Nonlocal Maintenance) |
+| **MP** | Media Protection | MP-2 (Media Access), MP-4 (Media Storage) |
+| **PE** | Physical and Environmental Protection | PE-2 (Physical Access), PE-6 (Monitoring Physical Access) |
+| **PL** | Planning | PL-2 (Security Plans), PL-8 (Security Architecture) |
+| **PM** | Program Management | PM-1 (Information Security Program), PM-9 (Risk Management) |
+| **PS** | Personnel Security | PS-2 (Position Risk), PS-3 (Personnel Screening) |
+| **PT** | PII Processing and Transparency | PT-1 (Policy), PT-2 (Authority to Process) |
+| **RA** | Risk Assessment | RA-3 (Risk Assessment), RA-5 (Vulnerability Monitoring) |
+| **SA** | System and Services Acquisition | SA-4 (Acquisition Process), SA-11 (Developer Testing) |
+| **SC** | System and Communications Protection | SC-7 (Boundary Protection), SC-8 (Transmission Confidentiality) |
+| **SI** | System and Information Integrity | SI-2 (Flaw Remediation), SI-4 (System Monitoring) |
+| **SR** | Supply Chain Risk Management | SR-3 (Supply Chain Controls), SR-6 (Supplier Assessments) |
+
+#### Control Priorities
+
+| Priority | Description | Selection |
+|----------|-------------|-----------|
+| **P1** | Highest priority, address first | Selected for all baselines |
+| **P2** | Moderate priority | Selected for MODERATE and HIGH |
+| **P3** | Lower priority | Selected for HIGH only |
 
 #### RMF Baselines
 
@@ -252,16 +319,21 @@ Get NIST controls for a plugin family.
 - **MODERATE**: Serious impact (most DoD systems)
 - **HIGH**: Severe or catastrophic impact (critical DoD systems)
 
-**Control Selection:**
+**Control Selection Example:**
 ```python
-# All baselines include these controls
-baseline_low = ["AC-2", "AC-3", "AU-2", "CM-6", "IA-2", "SI-2"]
+mapper = NISTMapper()
 
-# MODERATE adds more controls
-baseline_moderate = baseline_low + ["AC-4", "AU-6", "CM-7", "SC-7"]
+# Get all P1 (highest priority) controls
+p1_controls = mapper.get_controls_by_priority("P1")
 
-# HIGH adds comprehensive coverage
-baseline_high = baseline_moderate + ["AC-6", "AU-9", "SC-8", "SI-4"]
+# Get all controls in the Incident Response family
+ir_controls = mapper.get_controls_by_family("IR")
+
+# Get controls for a specific vulnerability
+log4shell_controls = mapper.get_vulnerability_controls_with_details(
+    cve="CVE-2021-44228",
+    category="remote_code_execution"
+)
 ```
 
 ---
